@@ -1,0 +1,28 @@
+name: Render Article 32 graphic
+on:
+  push:
+    paths:
+      - 'media/designs/2026-11-07-article32.svg'
+      - '.github/workflows/render-social.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install cairosvg
+      - run: python -c "import cairosvg; cairosvg.svg2png(url='media/designs/2026-11-07-article32.svg',write_to='media/posts/2026-11-07-article32.png',output_width=1080,output_height=1080)"
+      - name: Commit rendered PNG
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add media/posts/2026-11-07-article32.png
+          if ! git diff --cached --quiet; then
+            git commit -m "Render Article 32 graphic"
+            git push
+          fi
