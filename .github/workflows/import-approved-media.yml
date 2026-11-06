@@ -1,7 +1,7 @@
 name: Import approved image from GitHub issue
 on:
   issues:
-    types: [opened, edited]
+    types: [opened, edited, labeled]
 permissions:
   contents: write
   issues: read
