@@ -1,0 +1,28 @@
+name: Import approved image from GitHub issue
+on:
+  issues:
+    types: [opened, edited]
+permissions:
+  contents: write
+  issues: read
+jobs:
+  import:
+    if: github.event.issue.user.login == 'MarufTahmid013' && contains(github.event.issue.labels.*.name, 'approved-media')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Save issue body
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: |
+          printf '%s' "$ISSUE_BODY" > issue-body.txt
+      - name: Import original image
+        env:
+          ISSUE_BODY_FILE: issue-body.txt
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python3 publishing/import_issue_image.py
